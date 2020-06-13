@@ -1,0 +1,92 @@
+<h1>User info</h1>
+ <%= attachment_image_tag user, :profile_image, size: "100x100", format: 'jpeg', fallback: "no_image.jpg" %>
+
+
+<table class="table">
+	<tbody>
+		<tr></tr>
+		<tr>
+			<th>name</th>
+			<th><%= user.name %></th>
+		</tr>
+		<tr>
+			<th>introduction</th>
+			<th><%= user.introduction %></th>
+		</tr>
+		<tr>
+			<th>Follows</th>
+			<th>
+				<%= link_to following_user_path(user) do %>
+				<strong>
+      			<%= user.followings.count %>
+    			</strong>
+    			<% end %>
+			</th>
+		</tr>
+		<tr>
+			<th>Followers</th>
+			<th>
+				<%= link_to followers_user_path(user) do %>
+				<strong>
+      			<%= user.followers.count %>
+    			</strong>
+    			<% end %>
+			</th>
+		</tr>
+	</tbody>
+</table>
+		<% unless current_user == user %>
+			<% if current_user.following?(user) %>
+				<%= form_for(current_user.following_relationships.find_by(following_id: user.id), html: { method: :delete }) do |f| %>
+				<%= f.submit "フォロー外す", class: "btn btn-large btn-primary follow-btn" %>
+			<% end %>
+			<% else %>
+	 			<%= form_for(current_user.following_relationships.build(following_id: user.id)) do |f| %>
+	   			<%= f.hidden_field :following_id %>
+	   			<%= f.submit "フォローする", class: "btn btn-large btn-success follow-btn" %>
+	    	<% end %>
+	   		<% end %>
+	    <% end %>
+
+	<div class="row">
+	<% if user.id == current_user.id %>
+        <%= link_to edit_user_path(user) do %>
+        <span class="glyphicon glyphicon-wrench btn btn-default col-xs-11"></span>
+        <% end %>
+    <% end %>
+	</div>
+<div class="row">
+<h2>New book</h2>
+</div>
+<div class="row">
+<%= form_for(book) do |f| %>
+	<% if book.errors.any? %>
+		<p><%= book.errors.count %> error prohibited this book from being saved:</p>
+		<ul>
+			<% book.errors.full_messages.each do |message| %>
+				<li><%= message %></li>
+			<% end %>
+		</ul>
+	<% end %>
+<div class="row">
+<h3>Title</h3>
+</div>
+<div class="row">
+	<%= f.text_field :title, class: "col-xs-11" %>
+</div>
+<div class="row">
+<h3>opinion</h3>
+</div>
+
+<div class="row">
+	<%= f.text_area :body, class: "col-xs-11" %>
+</div>
+
+<div class="row">
+<br><%= f.submit 'Create Book', class: "btn btn-primary col-xs-11" %></br>
+</div>
+<% end %>
+</div>
+
+
+
